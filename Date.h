@@ -1,4 +1,15 @@
 #include <iostream>
 #include <string>
 
-class{
+class Date {
+
+private:
+  int Year, Month, Day;
+
+public:
+  Date():
+
+
+
+
+}
