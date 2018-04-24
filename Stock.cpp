@@ -9,14 +9,12 @@
 
 using namespace std;
 
-
-
-void Stock::slice(const Date &RleaseDate) {
+void Stock::slice() {
 
 	map<Date, double, CmpByKeyDate>::iterator it1;
 	map<Date, double, CmpByKeyDate>::iterator it2;
-	it1 = Prices.find(RleaseDate);
-	it2 = Prices.find(RleaseDate);
+	it1 = Prices.find(Releasingdate);
+	it2 = Prices.find(Releasingdate);
 	int c1 = 0, c2 = 0;
 	while (it1 != Prices.begin()) {
 		if (c1 >= 60) {
