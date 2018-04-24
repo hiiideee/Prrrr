@@ -14,6 +14,8 @@ struct CmpByKeyDate {
 
 class Stock {
 protected:
+	static std::map<Date, double, CmpByKeyDate> MarketPrices;
+	static std::map<Date, double, CmpByKeyDate> MarketReturns;
 	std::string Ticker;
 	Date Releasingdate;
 	std::map<Date, double, CmpByKeyDate> Prices;
@@ -28,12 +30,12 @@ public:
 
 	std::string getTicker() const;
 	double getEPSbeat() const { return EPSbeat; };
-	const Date& getReleasingdate() const;
-	double getPrices(Date date) const;
-	double getReturns(Date date) const;
-	const std::map<Date, double, CmpByKeyDate>& GetPrices() const;
-	const std::map<Date, double, CmpByKeyDate>& GetReturns() const;
-	void slice(const Date &RleaseDate);
+	const Date& getReleasingdate() const { return Releasingdate; };
+	double getPrices(Date date) const { auto it = Prices.find(date); return it->second; }
+	double getReturns(Date date) const { auto it = Returns.find(date); return it->second; }
+	const std::map<Date, double, CmpByKeyDate>& GetPrices() const { return Prices; }
+	const std::map<Date, double, CmpByKeyDate>& GetReturns() const { return Returns; }
+	void slice();
 	virtual void Display();
 };
 
