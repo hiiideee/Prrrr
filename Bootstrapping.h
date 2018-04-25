@@ -8,7 +8,7 @@
 #include "Stock.h"
 #include "TickerBook.h"
 
-typedef std::vector<std::vector<std::vector<double, long>>> Matrix;
+typedef std::vector<std::vector<double>> Matrix;
 
 class Bootstrapping {
 private:
