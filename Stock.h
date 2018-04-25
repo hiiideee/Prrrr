@@ -20,7 +20,8 @@ protected:
 	Date Releasingdate;
 	std::map<Date, double, CmpByKeyDate> Prices;
 	std::map<Date, double, CmpByKeyDate> Returns;
-	double EPSbeat;
+	double EPSestimate;
+	double EPSactual;
 
 public:
 	Stock() {}
@@ -28,11 +29,12 @@ public:
 	Stock(const Stock& stock) :Ticker(stock.Ticker), Releasingdate(stock.Releasingdate), Prices(stock.Prices), Returns(stock.Returns) {}
 	virtual ~Stock() {}
 
+	double getMarketReturns(Date date) { auto it = MarketReturns.find(date); return it->second; };
 	std::string getTicker() const;
-	double getEPSbeat() const { return EPSbeat; };
-	const Date& getReleasingdate() const { return Releasingdate; };
-	double getPrices(Date date) const { auto it = Prices.find(date); return it->second; }
-	double getReturns(Date date) const { auto it = Returns.find(date); return it->second; }
+	double getEPSbeat() const { return (EPSactual/EPSestimate) - 1; }
+	const Date& getReleasingdate() const { return Releasingdate; }
+	double getPrices(int t) { slice();  auto it = Prices.begin(); advance(it, t); return it->second; }
+	double getReturns(int t) { slice();  auto it = Returns.begin(); advance(it, t); return it->second; }
 	const std::map<Date, double, CmpByKeyDate>& GetPrices() const { return Prices; }
 	const std::map<Date, double, CmpByKeyDate>& GetReturns() const { return Returns; }
 	void slice();
