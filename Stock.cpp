@@ -1,43 +1,57 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <map>
 #include <list>
 #include <vector>
 #include "Date.h"
-#include "TickerBook.h"
-#include "Stock.h"
 
-using namespace std;
-
-void Stock::slice() {
-
-	map<Date, double, CmpByKeyDate>::iterator it1;
-	map<Date, double, CmpByKeyDate>::iterator it2;
-	it1 = Prices.find(Releasingdate);
-	it2 = Prices.find(Releasingdate);
-	int c1 = 0, c2 = 0;
-	while (it1 != Prices.begin()) {
-		if (c1 >= 60) {
-			Prices.erase(it1--);
-			c1 ++;
-		}
-		else {
-			-- it1;
-			c1++;
-		}
+struct CmpByKeyDate {
+	bool operator()(Date d1, Date d2) {
+		return d1.toT() < d2.toT();
 	}
+};
 
-	while (it2 != Prices.end()) {
-		if (c2 >= 60) {
-			Prices.erase(it2++);
-			c2++;
-		}
-		else {
-			++it2;
-			c2 ++;
-		}
-	}
+class Stock {
+protected:
+	static std::map<Date, double, CmpByKeyDate> MarketPrices;
+	static std::map<Date, double, CmpByKeyDate> MarketReturns;
+	std::string Ticker;
+	Date Releasingdate;
+	std::map<Date, double, CmpByKeyDate> Prices;
+	std::map<Date, double, CmpByKeyDate> Returns;
+	double EPSbeat;
 
-	if (Prices.size() != 121) cout << "wtf" << endl;
-}
+public:
+	Stock() {}
+	Stock(std::string ticker, Date releasingdate, std::map<Date, double> prices, std::map<Date, double> returns);
+	Stock(const Stock& stock) :Ticker(stock.Ticker), Releasingdate(stock.Releasingdate), Prices(stock.Prices), Returns(stock.Returns) {}
+	virtual ~Stock() {}
 
+	double getMarketReturns(Date date) { auto it = MarketReturns.find(date); return it->second; };
+	std::string getTicker() const;
+	double getEPSbeat() const { return EPSbeat; };
+	const Date& getReleasingdate() const { return Releasingdate; };
+	double getPrices(int t) { slice();  auto it = Prices.begin(); advance(it, t); return it->second; }
+	double getReturns(int t) { slice();  auto it = Returns.begin(); advance(it, t); return it->second; }
+	const std::map<Date, double, CmpByKeyDate>& GetPrices() const { return Prices; }
+	const std::map<Date, double, CmpByKeyDate>& GetReturns() const { return Returns; }
+	void slice();
+	virtual void Display();
+};
+
+class Information : public Stock {
+private:
+	std::string address, sector, subindustry;
+
+public:
+	Information() {}
+	Information(std::string ticker, Date releasingdate, std::map<Date, double> prices, std::map<Date, double> returns, std::string address_, std::string sector_, std::string subindustry_);
+	Information(const Information& information);
+	virtual ~Information() {}
+
+	std::string getAddress() const { return address; };
+	std::string getSector() const { return sector; };
+	std::string getSubindustry() const { return subindustry; };
+	virtual void Display();
+};
