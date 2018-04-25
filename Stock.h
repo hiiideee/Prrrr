@@ -34,7 +34,7 @@ public:
 	double getMarketReturns(Date date) { auto it = MarketReturns.find(date); return it->second; };
 	std::string getTicker() const;
 	std::string getStartTime() { return StartTime; }
-	std::string getStartTime() { return EndTime; }
+	std::string getEndTime() { return EndTime; }
 	double getEPSbeat() const { return (EPSactual/EPSestimate) - 1; }
 	const Date& getReleasingdate() const { return Releasingdate; }
 	double getPrices(int t) { slice();  auto it = Prices.begin(); advance(it, t); return it->second; }
