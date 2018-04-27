@@ -7,14 +7,15 @@
 #include "Date.h"
 #include "Stock.h"
 #include "TickerBook.h"
+#include "Group.h"
 
-typedef std::vector<std::vector<double>> Matrix;
 
 class Bootstrapping {
 private:
 	double Threshold;
 	int Resampletime;
-	Matrix AAR_CAAR;
+	std::vector<double> AARlist = std::vector<double>(90);
+	std::vector<double> CAARlist = std::vector<double>(90);
 
 public:
 	Bootstrapping();
@@ -26,11 +27,6 @@ public:
 	void setResampletime(const int &resampletime) { Resampletime = resampletime; }
 	double getThreshold() const { return Threshold; }
 	int getResampletime() const { return Resampletime; }
-
-	std::list<std::vector<double, long>> getCAARlist() const;
-	std::list<std::vector<double, long>> getAARlist() const;
-	Group intoGroup(Group group); // BookPage by Regroup;
-
-
+	void run(Group group, Market market, TickerBook tickerbook);
 };
 
