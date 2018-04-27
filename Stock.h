@@ -4,59 +4,68 @@
 #include <map>
 #include <list>
 #include <vector>
+#include <string>
 #include "Date.h"
-
-struct CmpByKeyDate {
-	bool operator()(Date d1, Date d2) {
-		return d1.toT() < d2.toT();
-	}
-};
 
 class Stock {
 protected:
-	static std::map<Date, double, CmpByKeyDate> MarketPrices;
-	static std::map<Date, double, CmpByKeyDate> MarketReturns;
 	std::string Ticker;
-	Date Releasingdate;
-	std::map<Date, double, CmpByKeyDate> Prices;
-	std::map<Date, double, CmpByKeyDate> Returns;
-	double EPSestimate;
 	std::string StartTime;
 	std::string EndTime;
 	double EPSactual;
+	double EPSestimate;
+
 
 public:
-	Stock() {}
-	Stock(std::string ticker, Date releasingdate, std::map<Date, double> prices, std::map<Date, double> returns);
-	Stock(const Stock& stock) :Ticker(stock.Ticker), Releasingdate(stock.Releasingdate), Prices(stock.Prices), Returns(stock.Returns) {}
-	virtual ~Stock() {}
+	std::map<Date, double> Prices;
+	std::map<Date, double> Returns;
 
-	double getMarketReturns(Date date) { auto it = MarketReturns.find(date); return it->second; };
-	std::string getTicker() const;
+	Stock() {}
+	Stock(std::string ticker, std::string starttime, std::string endtime, double eps_act, double eps_est)
+		:Ticker(ticker), StartTime(starttime), EndTime(endtime), EPSactual(eps_act), EPSestimate(eps_est) {}
+	Stock(const Stock& stock) :Ticker(stock.Ticker), StartTime(stock.StartTime), EndTime(stock.EndTime),
+		EPSactual(stock.EPSactual), EPSestimate(stock.EPSestimate) {}
+	virtual ~Stock() {} /*constructer uses 5 protected arguments rather than prices and returns*/
+
+	std::string getTicker() const { return Ticker; }
 	std::string getStartTime() { return StartTime; }
 	std::string getEndTime() { return EndTime; }
-	double getEPSbeat() const { return (EPSactual/EPSestimate) - 1; }
-	const Date& getReleasingdate() const { return Releasingdate; }
-	double getPrices(int t) { slice();  auto it = Prices.begin(); advance(it, t); return it->second; }
-	double getReturns(int t) { slice();  auto it = Returns.begin(); advance(it, t); return it->second; }
+	void setReturns();
+	double getReturns(int t) { auto it = Returns.begin(); advance(it, t); return it->second; }
+	/*double getPrices(int t);
+	double getReturns(int t);
 	const std::map<Date, double, CmpByKeyDate> GetPrices() const { return Prices; }
-	const std::map<Date, double, CmpByKeyDate> GetReturns() const { return Returns; }
-	void slice();
-	virtual void Display();
+	const std::map<Date, double, CmpByKeyDate> GetReturns() const { return Returns; }*/
+	/*Currently we dont need these functions because prices and returns are public*/
+
+	double getEPSbeat() const { return (EPSactual / EPSestimate) - 1; }
+	void Display();
 };
 
+class Market : public Stock {
+public:
+	Market() {}
+	Market(std::string ticker, std::string starttime, std::string endtime, double eps_act, double eps_est)
+		:Stock(ticker, starttime, endtime, eps_act, eps_est) {}
+	Market(const Market& market) :Stock(market) {}
+	Market slice(Date startdate, Date enddate);
+};
+
+
+/*
 class Information : public Stock {
 private:
-	std::string address, sector, subindustry;
+std::string address, sector, subindustry;
 
 public:
-	Information() {}
-	Information(std::string ticker, Date releasingdate, std::map<Date, double> prices, std::map<Date, double> returns, std::string address_, std::string sector_, std::string subindustry_);
-	Information(const Information& information);
-	virtual ~Information() {}
+Information() {}
+Information(std::string ticker, Date releasingdate, std::map<Date, double> prices, std::map<Date, double> returns, std::string address_, std::string sector_, std::string subindustry_);
+Information(const Information& information);
+virtual ~Information() {}
 
-	std::string getAddress() const { return address; };
-	std::string getSector() const { return sector; };
-	std::string getSubindustry() const { return subindustry; };
-	virtual void Display();
+std::string getAddress() const { return address; };
+std::string getSector() const { return sector; };
+std::string getSubindustry() const { return subindustry; };
+virtual void Display();
 };
+*/
