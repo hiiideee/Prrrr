@@ -10,12 +10,8 @@ private:
 
 public:
 	Date() : Year(0), Month(0), Day(0) {}
-	Date(int year, int month, int day) : Year(year), Month(month), Day(day) {}
-	Date(std::string date) /*:Year(stoi(date.substr(0, 4))), Month(stoi(date.substr(4, 2))), Day(stoi(date.substr(6, 2)))*/ {
-		Year = 2010;
-		Month = 12;
-		Day = 10;
-	};
+	Date(int year, int month, int day) : Year(year), Month(month), Day(day) {}  
+	Date(std::string date) :Year(stoi(date.substr(0, 4))), Month(stoi(date.substr(5, 2))), Day(stoi(date.substr(8, 2))){}
 	Date(const Date& date) : Year(date.Year), Month(date.Month), Day(date.Day) {}
 	~Date() {}
 

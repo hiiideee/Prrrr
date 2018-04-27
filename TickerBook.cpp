@@ -11,7 +11,7 @@
 #include "Stock.h"
 
 using namespace std;
-
+/*
 void adjustHeap(vector<double> list, int root, int n) {
 	double temproot = list[root];
 	int child = 2 * root + 1;
@@ -65,7 +65,7 @@ void TickerBook::reorder() {
 	heapSort(heap, s);
 }
 
-vector<string> TickerBook::Divide(double threshold, int number) {
+/*vector<string> TickerBook::Divide(double threshold, int number) {
 	if (getSize() == RequiredSize) {
 		vector<string> mapofgroup;
 		reorder();
@@ -88,5 +88,49 @@ vector<string> TickerBook::Divide(double threshold, int number) {
 	}
 	else {
 		cout << "The number of the Stock is not Right" << endl;
+		return ;
 	}
+}*/
+
+void TickerBook::Divide(double threshold, TickerBook *group1, TickerBook *group2, TickerBook *group3) {
+	//reorder();
+	auto it = BookPage.begin();
+	for (it; it != BookPage.end(); it++) {
+		if ((Book.find(*it)->second).getEPSbeat() >= threshold && it != BookPage.end()) {
+			group1->BookPage.push_back(*it);
+			group1->Book.insert(pair<string, Stock>(*it, Book.find(*it)->second));
+		}
+		else if ((Book.find(*it)->second).getEPSbeat() > -1 * threshold && (Book.find(*it)->second).getEPSbeat() < threshold && it != BookPage.end()) {
+			group2->BookPage.push_back(*it);
+			group2->Book.insert(pair<string, Stock>(*it, Book.find(*it)->second));
+		}
+		else if ((Book.find(*it)->second).getEPSbeat() < -1 * threshold && it != BookPage.end()) {
+			group3->BookPage.push_back(*it);
+			group3->Book.insert(pair<string, Stock>(*it, Book.find(*it)->second));
+		}
+	}
+
+}
+
+bool TickerBook::Compute(Market market) {
+	for (auto it = BookPage.begin(); it != BookPage.end(); it++) {
+		int a = 0;
+		for (int t = 0; t < 90; t++) {
+			auto itb = Book.find(*it);
+			cout << "yeah" << endl;
+			AAR[t] = AAR[t] * a / (a + 1) + (itb->second).getReturns(t) / (a + 1);
+			cout << "yeah" << endl;
+			Market slicedmarket(market.getTicker(), market.getStartTime(), market.getEndTime(),
+				market.getEPSactual(), market.getEPSestimate());
+			market.slice((itb->second).getStartTime(), (itb->second).getEndTime(),&slicedmarket);
+			cout << "yeah" << endl;
+			AAR[t] = AAR[t] - slicedmarket.getReturns(t) / (a + 1);
+		}
+		a++;
+	}
+	CAAR[1] = AAR[1];
+	for (int j = 1; j <= 90; j++) {
+		CAAR[j] = AAR[j] + CAAR[j - 1];
+	}
+	return true;
 }

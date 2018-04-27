@@ -30,6 +30,9 @@ public:
 	std::string getTicker() const { return Ticker; }
 	std::string getStartTime() { return StartTime; }
 	std::string getEndTime() { return EndTime; }
+	double getEPSactual() { return EPSactual; }
+	double getEPSestimate() { return EPSestimate; }
+
 	void setReturns();
 	double getReturns(int t) { auto it = Returns.begin(); advance(it, t); return it->second; }
 	/*double getPrices(int t);
@@ -48,7 +51,7 @@ public:
 	Market(std::string ticker, std::string starttime, std::string endtime, double eps_act, double eps_est)
 		:Stock(ticker, starttime, endtime, eps_act, eps_est) {}
 	Market(const Market& market) :Stock(market) {}
-	Market slice(Date startdate, Date enddate);
+	void slice(Date startdate, Date enddate, Market* market);
 };
 
 

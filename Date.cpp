@@ -73,11 +73,11 @@ std::string Date::toString() const {
 }
 /*
 int Date::toT() {
-int ty = 0, tm = 0, td = 0;
-ty = (Year - 2000) * 1200;
-tm = (Month * 70);
-td = Day * 2;
-t = ty + tm + td;
-return t;
+	int ty = 0, tm = 0, td = 0;
+	ty = (Year - 2000) * 1200;
+	tm = (Month * 70);
+	td = Day * 2;
+	t = ty + tm + td;
+	return t;
 }
 */
