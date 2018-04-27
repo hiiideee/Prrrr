@@ -65,62 +65,28 @@ void TickerBook::reorder() {
 	heapSort(heap, s);
 }
 
-
-void Group::Divide(double threshold) {
-	reorder();
-	auto it = BookPage.begin();
-	while ((Book.find(*it)->second).getEPSbeat() >= threshold  && it != BookPage.end()) {
-		map_group.insert(make_pair(1, *it));
+vector<string> TickerBook::Divide(double threshold, int number) {
+	if (getSize() == RequiredSize) {
+		vector<string> mapofgroup;
+		reorder();
+		auto it = BookPage.begin();
+		for (it; it != BookPage.end();) {
+			while ((Book.find(*it)->second).getEPSbeat() >= threshold && it != BookPage.end()) {
+				if (number == 1) mapofgroup.push_back(*it++);
+				else it++;
+			}
+			while ((Book.find(*it)->second).getEPSbeat() > -1 * threshold && (Book.find(*it)->second).getEPSbeat() < threshold && it != BookPage.end()) {
+				if (number == 2) mapofgroup.push_back(*it++);
+				else it++;
+			}
+			while ((Book.find(*it)->second).getEPSbeat() < -1 * threshold && it != BookPage.end()) {
+				if (number == 3) mapofgroup.push_back(*it++);
+				else it++;
+			}
+		}
+		return mapofgroup;
 	}
-	while ((Book.find(*it)->second).getEPSbeat() > -1 * threshold && (Book.find(*it)->second).getEPSbeat() < threshold && it != BookPage.end()) {
-		map_group.insert(make_pair(2, *it));
-	}
-	while ((Book.find(*it)->second).getEPSbeat() < -1 * threshold && it != BookPage.end()) {
-		map_group.insert(make_pair(3, *it));
+	else {
+		cout << "The number of the Stock is not Right" << endl;
 	}
 }
-
-typedef multimap <int, string>::const_iterator CIT;
-typedef pair<CIT, CIT> Range;
-
-bool Group::Compute(Stock Market) {
-	Range range = map_group.equal_range(1);
-	for (CIT i = range.first; i != range.second; i++) {
-		for (int t = 0; t <= 120; t++) {
-			auto it = Book.find(i->second);
-			AAR[t][0] = AAR[t][0] * (t / (t + 1)) + ((it->second).getReturns(t)) / (t + 1) ; 
-			auto itr = (it->second).GetReturns().begin();
-			advance(itr, t);
-			AAR[t][0] = AAR[t][0] - (it->second).getMarketReturns(itr->first) /(t + 1);
-		}
-	}
-	Range range = map_group.equal_range(2);
-	for (CIT i = range.first; i != range.second; i++) {
-		for (int t = 0; t <= 120; t++) {
-			auto it = Book.find(i->second);
-			AAR[t][1] = AAR[t][1] * (t / (t + 1)) + ((it->second).getReturns(t)) / (t + 1); 
-			auto itr = (it->second).GetReturns().begin();
-			advance(itr, t);
-			AAR[t][0] = AAR[t][0] - (it->second).getMarketReturns(itr->first) / (t + 1);
-		}
-	}
-	Range range = map_group.equal_range(3);
-	for (CIT i = range.first; i != range.second; i++) {
-		for (int t = 0; t <= 120; t++) {
-			auto it = Book.find(i->second);
-			AAR[t][2] = AAR[t][2] * (t / (t + 1)) + ((it->second).getReturns(t)) / (t + 1); 
-			auto itr = (it->second).GetReturns().begin();
-			advance(itr, t);
-			AAR[t][0] = AAR[t][0] - (it->second).getMarketReturns(itr->first) / (t + 1);
-		}
-	}
-	
-	CAAR[1] = AAR[1];
-	for (int j = 1; j <= 120; j++) {
-		CAAR[j][0] = AAR[j][0] + CAAR[j - 1][0];
-	}
-	return true;
-}
-
-
-
