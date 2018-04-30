@@ -47,8 +47,8 @@ string getTimeinSeconds(string Time)
 	memset(time, 0, 100);
 	if (ssTime >> std::get_time(&t, "%Y-%m-%d %H:%M:%S"))
 	{
-		cout << std::put_time(&t, "%c %Z") << "\n"
-		<< std::mktime(&t) << "\n";
+		//cout << std::put_time(&t, "%c %Z") << "\n"
+		//<< std::mktime(&t) << "\n";
 		sprintf (time, "%lld", mktime(&t)); //It gives me wearning that I should use lld because mktime(&t) is type time_t.
 		return string(time);
 	}
@@ -73,8 +73,8 @@ void GetTickerList(TickerBook& StockList, string filename)
 		getline(infile, start, '\t');
 		getline(infile, end, '\n');
 		// Use the constructor to creat stock and push into category.
-		StockList.Book.insert(pair<string, Stock>(ticker, Stock(ticker, start, end, atof(act_eps.c_str()), atof(est_eps.c_str()))));
-		StockList.BookPage.push_back(ticker); 
+		StockList.setBook(ticker, Stock(ticker, start, end, atof(act_eps.c_str()), atof(est_eps.c_str())));
+		StockList.setBookPage(ticker); 
 	}
 }
 
@@ -175,7 +175,7 @@ int GetStockPrice(TickerBook& StockList)
 			}
 			Info.str(temp_ptr.memory);
 			getline(Info, temp_line);// Pop out the first line.
-			for (int j = 0; j < 62; j++)//62?
+			for (int j = 0; j < 91; j++)//62?
 			{
 				getline(Info, temp_line, ',');//Date
 				Date temp_date(temp_line);
@@ -185,14 +185,17 @@ int GetStockPrice(TickerBook& StockList)
 				getline(Info, temp_line, ',');//Close
 				getline(Info, temp_line, ',');//Adj close
 				double temp_price = atof(temp_line.c_str());
-				itr->second.Prices.insert(std::pair<Date, double>(temp_date, temp_price));
+				if (temp_price > 0) {
+					itr->second.setPrices(temp_date, temp_price); 
+				}
+				else cout << itr->second.getTicker() << "'s Price is Invalid" << endl;
+				itr->second.setPrices(temp_date, temp_price);
 				getline(Info, temp_line, '\n');//Volume
 			}
+		//	cout << itr->first << endl;
 			free(temp_ptr.memory);
 			temp_ptr.size = 0;
 			itr->second.setReturns();
-			cout << itr->second.Prices.size()<<endl;
-			cout << itr->second.Returns.size()<<endl;
 			itr++;
 		}
 		
@@ -293,7 +296,7 @@ int GetSPYPrice(Market& Spy)
 		Info.str(temp_ptr.memory);
 		
 		getline(Info, temp_line);// Pop out the first line.
-		for (int j = 0; j < 118; j++)
+		for (int j = 0; j < 164; j++)
 		{
 			getline(Info, temp_line, ',');//Date
 			
@@ -306,7 +309,7 @@ int GetSPYPrice(Market& Spy)
 			getline(Info, temp_line, ',');//Adj close
 			double temp_price = atof(temp_line.c_str());//price
 			getline(Info, temp_line, '\n');//Volume
-			Spy.Prices.insert(std::pair<Date, double>(temp_date, temp_price));			
+			Spy.setPrices(temp_date, temp_price);			
 		}
 		free(temp_ptr.memory);
 		temp_ptr.size = 0;
