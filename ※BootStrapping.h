@@ -1,4 +1,6 @@
 #pragma once
+#ifndef BootStrapping_h
+#define BootStrapping_h
 #include <iostream>
 #include <string>
 #include <map>
@@ -28,6 +30,7 @@ public:
 	void setResampletime(const int &resampletime) { Resampletime = resampletime; }
 	double getThreshold() const { return Threshold; }
 	int getResampletime() const { return Resampletime; }
-	void run(Market market, TickerBook tickerbook);
+	void run(Market *market, TickerBook *tickerbook);
 };
 
+#endif
