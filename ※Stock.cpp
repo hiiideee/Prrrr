@@ -35,10 +35,9 @@ void Stock::Display() {
 void Market::slice(Date startdate, Date enddate, Market *market) {
 	//Market market(Ticker, startdate.toString(), enddate.toString(), EPSactual, EPSestimate);
 	/*for (auto i = Prices.find(startdate); i != (Prices.find(enddate)); i++)
-		market.Prices.insert(std::pair<Date, double>(i->first, i->second));*/
+	market.Prices.insert(std::pair<Date, double>(i->first, i->second));*/
 	for (auto i = Returns.find(startdate); i != (Returns.find(enddate)); i++)
 		market->Returns.insert(std::pair<Date, double>(i->first, i->second));
-
 }
 
 void Stock::setReturns() {
