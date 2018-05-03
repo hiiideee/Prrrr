@@ -175,7 +175,7 @@ int GetStockPrice(TickerBook& StockList)
 			}
 			Info.str(temp_ptr.memory);
 			getline(Info, temp_line);// Pop out the first line.
-			for (int j = 0; j < 91; j++)//62?
+			for (int j = 0; j < 91; j++)
 			{
 				getline(Info, temp_line, ',');//Date
 				Date temp_date(temp_line);
